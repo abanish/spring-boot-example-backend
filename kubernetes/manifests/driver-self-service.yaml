@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: driver-self-service
+  labels:
+    app: driver-self-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: driver-self-service
+  template:
+    metadata:
+      labels:
+        app: driver-self-service
+    spec:
+      containers:
+        - env:
+            - name: CUSTOMERCORE_BASEURL
+              value: http://driver-data-registry:8110
+            - name: POLICYMANAGEMENT_TCPBROKERBINDADDRESS
+              value: tcp://policy-management-backend:61616
+            - name: SPRING_BOOT_ADMIN_CLIENT_URL
+              value: http://spring-boot-admin:9000
+          image: gcr.io/uber-driver-2023/driver-self-service
+          imagePullPolicy: Always
+          name: driver-self-service
+          ports:
+            - containerPort: 8080
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: driver-self-service
+spec:
+  selector:
+    app: driver-self-service
+  ports:
+    - name: "8080"
+      port: 8080
+      targetPort: 8080
+  type: LoadBalancer
+  loadBalancerIP: 34.65.192.94

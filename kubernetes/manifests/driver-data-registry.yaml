@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: driver-data-registry
+  labels:
+    app: driver-data-registry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: driver-data-registry
+  template:
+    metadata:
+      labels:
+        app: driver-data-registry
+    spec:
+      containers:
+        - env:
+            - name: SPRING_BOOT_ADMIN_CLIENT_URL
+              value: http://spring-boot-admin:9000
+          image: gcr.io/uber-driver-2023/driver-data-registry
+          imagePullPolicy: Always
+          name: driver-data-registry
+          ports:
+            - containerPort: 8110
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: driver-data-registry
+spec:
+  selector:
+    app: driver-data-registry
+  ports:
+    - name: "8110"
+      port: 8110
+      targetPort: 8110

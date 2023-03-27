@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: driver-onboarding-management
+  labels:
+    app: driver-onboarding-management
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: driver-onboarding-management
+  template:
+    metadata:
+      labels:
+        app: driver-onboarding-management
+    spec:
+      containers:
+        - env:
+            - name: DRIVERDATAREGISTRY_BASEURL
+              value: http://driver-data-registry:8110
+            - name: SPRING_BOOT_ADMIN_CLIENT_URL
+              value: http://spring-boot-admin:9000
+          image: gcr.io/uber-driver-2023/driver-onboarding-management
+          imagePullPolicy: Always
+          name: driver-onboarding-management
+          ports:
+            - containerPort: 8090
+            - containerPort: 37551
+            - containerPort: 37559
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: driver-onboarding-management
+spec:
+  selector:
+    app: driver-onboarding-management
+  ports:
+    - name: "8090"
+      port: 8090
+      targetPort: 8090
+  type: LoadBalancer
+  loadBalancerIP: 34.65.192.94
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: driver-onboarding-management-queue
+spec:
+  selector:
+    app: driver-onboarding-management
+  ports:
+    - name: "37551"
+      port: 37551
+      targetPort: 37551
+    - name: "37559"
+      port: 37559
+      targetPort: 37559
+  type: LoadBalancer
+  loadBalancerIP: 34.65.192.94

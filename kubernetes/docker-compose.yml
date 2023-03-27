@@ -1,0 +1,15 @@
+
+version: "3"
+services:
+  driver-data-registry:
+    build: ../driver-data-registry
+    image: gcr.io/uber-driver-2023/driver-data-registry
+  drver-self-service:
+    build: ../driver-self-service
+    image: gcr.io/uber-driver-2023/driver-self-service
+  policy-management-backend:
+    build: ../driver-onboarding-management
+    image: gcr.io/uber-driver-2023/driver-onboarding-management
+  spring-boot-admin:
+    build: ../spring-boot-admin
+    image: gcr.io/uber-driver-2023/spring-boot-admin
